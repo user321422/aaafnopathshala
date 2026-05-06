@@ -8,6 +8,7 @@
 <style>
   :root {
     --bg: #f7f7f4;
+    --nav-height: 48px;
     --surface: #ffffff;
     --surface2: #f1f3ee;
     --border: rgba(0,0,0,0.08);
@@ -27,7 +28,8 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    padding-top: 0;
     font-size: 16px;
     line-height: 1.6;
     overflow-x: hidden;
@@ -35,39 +37,45 @@
 
   /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    position: fixed; top: 10px; left: 5%; right: 5%; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 5%;
-    background: rgba(255,255,255,0.82);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid var(--border);
+    height: calc(var(--nav-height) - 8px);
+    padding: 0 1rem;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(12,18,20,0.06);
+    border: 0.5px solid rgba(0,0,0,0.04);
   }
   .logo {
-    font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em; color: var(--text);
+    font-size: 1.15rem; font-weight: 800; letter-spacing: -.01em; color: var(--text);
     text-decoration: none;
   }
   .logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links { display: flex; gap: 1.25rem; list-style: none; align-items: center; }
   .nav-links a {
-    font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--muted); text-decoration: none; transition: color .2s;
+    font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color .18s ease, opacity .18s ease;
+    position: relative; padding: .25rem 0;
   }
-  .nav-links a:hover { color: var(--text); }
+  .nav-links a::after{ content: ''; position: absolute; left:0; right:0; height:2px; background:var(--accent); bottom:-6px; transform:scaleX(0); transform-origin:left; transition:transform .22s ease; }
+  .nav-links a:hover::after{ transform:scaleX(1); }
+  .nav-links a:hover { color: var(--text); opacity: .95 }
   .nav-cta {
-    background: var(--accent); color: #0a0a08;
-    font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: .8rem;
+    background: linear-gradient(90deg,var(--accent),var(--accent2)); color: #0a0a08;
+    font-family: Arial, Helvetica, sans-serif; font-weight: 800; font-size: .85rem;
     letter-spacing: .04em; text-transform: uppercase;
-    border: none; border-radius: 6px; padding: .55rem 1.25rem;
-    cursor: pointer; transition: opacity .2s;
-    text-decoration: none;
+    border: none; border-radius: 999px; padding: .5rem 1rem;
+    cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+    text-decoration: none; box-shadow: 0 6px 18px rgba(111,150,80,0.12);
   }
-  .nav-cta:hover { opacity: .85; }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(111,150,80,0.14); }
 
   /* HERO */
   .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 0 5% 6rem;
+    min-height: 55vh;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    padding: calc(var(--nav-height) + 4px) 5% 0.25rem;
     position: relative;
     overflow: hidden;
   }
@@ -78,12 +86,7 @@
       radial-gradient(ellipse 40% 60% at 20% 80%, rgba(125,222,140,0.05) 0%, transparent 55%);
   }
   .hero-grid {
-    position: absolute; inset: 0; z-index: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+    display: none; /* simplify visuals */
   }
   .hero-label {
     position: relative; z-index: 1;
@@ -91,6 +94,7 @@
     color: var(--accent); margin-bottom: 1.5rem;
     display: flex; align-items: center; gap: .6rem;
   }
+  .hero-label { margin-bottom: .6rem; }
   .hero-label::before {
     content: ''; display: block; width: 28px; height: 1px; background: var(--accent);
   }
@@ -102,7 +106,7 @@
     font-weight: 400;
     letter-spacing: -.02em;
     max-width: 900px;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
   .hero-h1 em { font-style: italic; color: var(--accent); }
   .hero-row {
@@ -117,7 +121,7 @@
   .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
   .btn-primary {
     background: var(--accent); color: #0a0a08;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem;
+    font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: .85rem;
     letter-spacing: .04em; text-transform: uppercase;
     border: none; border-radius: 8px; padding: .85rem 2rem;
     cursor: pointer; transition: opacity .2s, transform .15s;
@@ -126,7 +130,7 @@
   .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
   .btn-ghost {
     background: transparent; color: var(--text);
-    font-family: 'Syne', sans-serif; font-weight: 600; font-size: .85rem;
+    font-family: Arial, Helvetica, sans-serif; font-weight: 600; font-size: .85rem;
     letter-spacing: .04em;
     border: 0.5px solid var(--border2); border-radius: 8px; padding: .85rem 2rem;
     cursor: pointer; transition: border-color .2s, background .2s;
@@ -135,7 +139,7 @@
   .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
   .hero-stats {
     position: relative; z-index: 1;
-    margin-top: 5rem;
+    margin-top: 0.5rem;
     display: flex; gap: 0;
     border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden;
     width: fit-content;
@@ -165,7 +169,7 @@
   @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   /* SECTIONS */
-  section { padding: 6rem 5%; }
+  section { padding: 2rem 5%; }
 
   .section-eyebrow {
     font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
@@ -174,7 +178,7 @@
   }
   .section-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--accent); display: block; }
   .section-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: Georgia, serif;
     font-size: clamp(2rem, 4.5vw, 3.5rem);
     font-weight: 400; line-height: 1.1; letter-spacing: -.02em;
     margin-bottom: 1rem;
@@ -213,7 +217,7 @@
     position: sticky; top: 6rem;
   }
   .svc-detail-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: Georgia, serif;
     font-size: 1.8rem; font-weight: 400; margin-bottom: .75rem;
   }
   .svc-detail-desc { color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; font-weight: 400; }
@@ -283,11 +287,11 @@
     display: inline-block; margin-bottom: 1rem;
   }
   .plan-name {
-    font-family: 'Instrument Serif', serif; font-size: 1.8rem; font-weight: 400;
+    font-family: Georgia, serif; font-size: 1.8rem; font-weight: 400;
     margin-bottom: .4rem;
   }
   .plan-price { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 400; }
-  .plan-price strong { font-size: 1.3rem; color: var(--accent); font-weight: 800; font-family: 'Syne', sans-serif; }
+  .plan-price strong { font-size: 1.3rem; color: var(--accent); font-weight: 800; font-family: Arial, Helvetica, sans-serif; }
   .plan-divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
   .plan-features li {
@@ -297,7 +301,7 @@
   .plan-features li.highlight { color: var(--text); }
   .plan-btn {
     margin-top: 1.75rem; width: 100%;
-    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .82rem;
+    font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: .82rem;
     letter-spacing: .04em; text-transform: uppercase;
     padding: .8rem; border-radius: 8px; cursor: pointer;
     transition: opacity .2s;
@@ -401,8 +405,9 @@
 
   /* TABLET & MOBILE */
   @media (max-width: 1024px) {
-    section { padding: 4rem 5%; }
-    nav { padding: 1rem 5%; }
+    section { padding: 3rem 5%; }
+    nav { height: 56px; }
+    body { padding-top: 56px; }
     .svc-detail { position: static; }
   }
 
@@ -411,15 +416,16 @@
     nav { 
       flex-direction: column; 
       gap: 1rem; 
-      padding: 0.75rem 5%;
+      height: auto; padding: 0.75rem 5%;
     }
+    body { padding-top: 0; }
     .logo { font-size: 1rem; }
     .nav-links { display: none; }
     .nav-cta { padding: 0.5rem 1rem; font-size: 0.75rem; }
     
     section { padding: 3rem 5%; }
     
-    .hero { padding: 0 5% 4rem; min-height: 90vh; }
+    .hero { padding: 0.75rem 5% 2rem; min-height: 60vh; }
     .hero-h1 { font-size: clamp(2rem, 7vw, 3.5rem); margin-bottom: 1.5rem; }
     .hero-row { flex-direction: column; gap: 1.5rem; }
     .hero-sub { max-width: 100%; }
@@ -486,7 +492,7 @@
     
     section { padding: 2.5rem 4%; }
     
-    .hero { padding: 0 4% 3rem; min-height: 80vh; }
+    .hero { padding: 1rem 4% 2.5rem; min-height: 60vh; }
     .hero-h1 { font-size: clamp(1.75rem, 6vw, 2.5rem); margin-bottom: 1rem; }
     .hero-label { font-size: 0.65rem; margin-bottom: 1rem; }
     .hero-label::before { width: 20px; }
@@ -545,9 +551,10 @@
   <a class="logo" href="#">Aafno<span>.</span>Pathshala</a>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
+    <li><a href="about.html">About us</a></li>
     <li><a href="#addons">Solutions</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#pathshala">Pathshala</a></li>
+  
   </ul>
   <a href="#contact" class="nav-cta">Get started</a>
 </nav>
@@ -565,12 +572,7 @@
       <a href="#services" class="btn-ghost">See our work</a>
     </div>
   </div>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Businesses served</div></div>
-    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Service areas</div></div>
-    <div class="stat"><div class="stat-num">3×</div><div class="stat-label">Avg. growth rate</div></div>
-    <div class="stat"><div class="stat-num">NPR 5k</div><div class="stat-label">Starting price</div></div>
-  </div>
+
 </section>
 
 <!-- TICKER -->
@@ -691,11 +693,12 @@
       <div class="plan-price"><strong>NPR 5k–10k</strong> / month</div>
       <hr class="plan-divider"/>
       <ul class="plan-features">
-        <li class="highlight">Social media management</li>
-        <li class="highlight">Monthly content calendar</li>
-        <li>3–4 posts per week</li>
-        <li>Comment & DM handling</li>
-        <li>Basic performance report</li>
+        <li class="highlight">Monthly social media management (local-friendly)</li>
+        <li class="highlight">Simple monthly content plan</li>
+        <li>3–4 easy-to-understand posts per week (images + captions)</li>
+        <li>Basic replies to comments and messages during business hours</li>
+        <li>Short monthly summary — key numbers and next steps</li>
+        <li>Local language support (Nepali/English) and small edits included</li>
       </ul>
       <a href="#contact" class="plan-btn plan-btn-ghost">Get started</a>
     </div>
@@ -706,7 +709,7 @@
       <div class="plan-price"><strong>NPR 15k–30k</strong> / month</div>
       <hr class="plan-divider"/>
       <ul class="plan-features">
-        <li class="highlight">Everything in Starter</li>
+        <li class="highlight">Everything of Starter Pack</li>
         <li class="highlight">Facebook & Google Ads</li>
         <li class="highlight">Local SEO & Google My Business</li>
         <li>Keyword research</li>
@@ -721,7 +724,7 @@
       <div class="plan-price"><strong>NPR 40k+</strong> / month</div>
       <hr class="plan-divider"/>
       <ul class="plan-features">
-        <li class="highlight">Everything in Growth</li>
+        <li class="highlight">Everything of Growth Pack</li>
         <li class="highlight">Website or e-commerce build</li>
         <li class="highlight">AI chatbot & automation</li>
         <li class="highlight">Full branding package</li>

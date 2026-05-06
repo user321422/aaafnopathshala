@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>About — Aafno Pathshala</title>
+  <style>
+    :root{
+      --bg:#f7f7f4;
+      --surface:#fff;
+      --muted:#666;
+      --text:#111;
+      --accent:#6cab2f;
+      --border:rgba(0,0,0,0.08);
+      --nav-height:48px;
+      --section-gap:2rem;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    nav{position:fixed;left:5%;right:5%;top:10px;height:calc(var(--nav-height) - 8px);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;background:rgba(255,255,255,0.95);border-radius:10px;box-shadow:0 8px 30px rgba(12,18,20,0.06);border:0.5px solid rgba(0,0,0,0.04);z-index:120}
+    .logo{font-weight:800;color:var(--text);text-decoration:none}
+    .nav-links{display:flex;gap:1.25rem;list-style:none;align-items:center}
+    .nav-links a{color:var(--muted);text-decoration:none;font-weight:700;position:relative;padding:.25rem 0}
+    .nav-links a::after{content:'';position:absolute;left:0;right:0;height:2px;background:var(--accent);bottom:-6px;transform:scaleX(0);transform-origin:left;transition:transform .22s}
+    .nav-links a:hover::after{transform:scaleX(1)}
+
+    main{margin-top:var(--nav-height)}
+    .section {padding:2rem 5%;border-bottom:1px solid rgba(0,0,0,0.03);scroll-margin-top:calc(var(--nav-height) + 8px)}
+    .section--hero{display:flex;align-items:center;min-height:50vh;padding-top:.5rem;padding-bottom:.5rem}
+    .wrap{max-width:var(--max-width);margin:0 auto}
+    .eyebrow{font-size:.8rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.35rem}
+    h1{font-family:Georgia,serif;font-size:2.4rem;margin:0 0 .35rem 0}
+    p.lead{color:var(--muted);max-width:760px;margin:0 0 .6rem 0}
+
+    .two-col{display:flex;gap:2.5rem;align-items:flex-start}
+    .two-col > div{flex:1}
+    .muted{color:var(--muted)}
+
+    .team {padding:2.5rem 5%;display:flex;justify-content:center}
+    .team-list{max-width:640px;width:100%;display:flex;flex-direction:column;gap:1rem;align-items:center}
+    .person{width:100%;text-align:center;padding:1rem;border-radius:8px}
+    .person h3{margin:0 0 .25rem 0}
+    .person p{margin:0;color:var(--muted)}
+
+    .btn{display:inline-block;background:var(--accent);color:#0a0a08;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:700}
+
+    @media (max-width:900px){
+      .two-col{flex-direction:column}
+      h1{font-size:2rem}
+      .section--hero{padding-top:1rem;padding-bottom:1rem}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="index.html">Aafno<span style="color:var(--accent)">.</span>Pathshala</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="about.html" style="color:var(--text);">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="section section--hero">
+      <div class="wrap">
+        <div class="eyebrow">About</div>
+        <h1>Aafno Pathshala — practical digital for Nepali businesses</h1>
+        <p class="lead muted">We build simple, reliable websites, clear content, and backend tools that help small businesses save time and get customers. We prioritise clarity, local context, and practical outcomes.</p>
+        <div style="margin-top:.5rem">
+          <a class="btn" href="index.html#contact">Work with us</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap two-col">
+        <div>
+          <h2 class="eyebrow">What we do</h2>
+          <p class="muted">Focused services tailored for local needs — nothing flashy, just work that brings customers.</p>
+          <ul class="list" style="margin-top:1rem">
+            <li>Website & small e-commerce builds</li>
+            <li>Content and simple social plans</li>
+            <li>Backend integrations and automation</li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="eyebrow">How we work</h2>
+          <p class="muted">Short engagements, clear deliverables, and handover with simple steps so you can maintain things yourself.</p>
+          <ul class="list" style="margin-top:1rem">
+            <li>Talk and define goals</li>
+            <li>Deliver a minimally viable solution</li>
+            <li>Train and hand over with a clear checklist</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section team">
+      <div class="team-list">
+        <div class="person">
+          <h3>Narayan Adhikari</h3>
+          <p>Founder & developer helper — backend-focused, supports technical delivery and integrations.</p>
+        </div>
+        <div class="person">
+          <h3>Dipendra Thapa</h3>
+          <p>Lead developer — architects solutions and ensures code quality.</p>
+        </div>
+        <div class="person">
+          <h3>Dipesh Adhikari</h3>
+          <p>Content strategist & marketing head — plans messaging and campaigns.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Aafno Pathshala · <a href="index.html">Back to home</a>
+  </footer>
+</body>
+</html>
