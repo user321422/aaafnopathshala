@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aafno Pathshala — Build. Automate. Grow.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f7f7f4;
+    --surface: #ffffff;
+    --surface2: #f1f3ee;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #111111;
+    --muted: #666666;
+    --accent: #6cab2f;
+    --accent2: #4f8f5b;
+    --accent-dim: rgba(184,245,90,0.12);
+    --accent-border: rgba(184,245,90,0.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 5%;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .logo {
+    font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em; color: var(--text);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent); color: #0a0a08;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .8rem;
+    letter-spacing: .04em; text-transform: uppercase;
+    border: none; border-radius: 6px; padding: .55rem 1.25rem;
+    cursor: pointer; transition: opacity .2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { opacity: .85; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 5% 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(184,245,90,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(125,222,140,0.05) 0%, transparent 55%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+  }
+  .hero-label {
+    position: relative; z-index: 1;
+    font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .hero-label::before {
+    content: ''; display: block; width: 28px; height: 1px; background: var(--accent);
+  }
+  .hero-h1 {
+    position: relative; z-index: 1;
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(3.2rem, 8vw, 7.5rem);
+    line-height: 1.0;
+    font-weight: 400;
+    letter-spacing: -.02em;
+    max-width: 900px;
+    margin-bottom: 2rem;
+  }
+  .hero-h1 em { font-style: italic; color: var(--accent); }
+  .hero-row {
+    position: relative; z-index: 1;
+    display: flex; align-items: flex-end; gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .hero-sub {
+    font-size: 1rem; color: var(--muted); max-width: 420px; line-height: 1.7;
+    font-weight: 400;
+  }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #0a0a08;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .85rem;
+    letter-spacing: .04em; text-transform: uppercase;
+    border: none; border-radius: 8px; padding: .85rem 2rem;
+    cursor: pointer; transition: opacity .2s, transform .15s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: .85rem;
+    letter-spacing: .04em;
+    border: 0.5px solid var(--border2); border-radius: 8px; padding: .85rem 2rem;
+    cursor: pointer; transition: border-color .2s, background .2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+  .hero-stats {
+    position: relative; z-index: 1;
+    margin-top: 5rem;
+    display: flex; gap: 0;
+    border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden;
+    width: fit-content;
+  }
+  .stat {
+    padding: .9rem 1.8rem; border-right: 0.5px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: .72rem; color: var(--muted); font-weight: 400; letter-spacing: .04em; margin-top: .1rem; }
+
+  /* TICKER */
+  .ticker {
+    overflow: hidden; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);
+    padding: .75rem 0; background: var(--surface);
+  }
+  .ticker-inner {
+    display: flex; gap: 3rem; width: max-content;
+    animation: scroll 25s linear infinite;
+  }
+  .ticker-item {
+    display: flex; align-items: center; gap: .6rem;
+    font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); white-space: nowrap;
+  }
+  .ticker-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SECTIONS */
+  section { padding: 6rem 5%; }
+
+  .section-eyebrow {
+    font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .section-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--accent); display: block; }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 400; line-height: 1.1; letter-spacing: -.02em;
+    margin-bottom: 1rem;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+  .section-sub { color: var(--muted); max-width: 480px; line-height: 1.7; font-weight: 400; }
+
+  /* SERVICES */
+  .services-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start;
+    margin-top: 4rem;
+  }
+  .services-list { display: flex; flex-direction: column; gap: .6rem; }
+  .svc-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem; border-radius: 10px;
+    border: 0.5px solid transparent;
+    cursor: pointer; transition: background .2s, border-color .2s;
+    background: transparent;
+  }
+  .svc-item.active,
+  .svc-item:hover {
+    background: var(--surface2);
+    border-color: var(--border2);
+  }
+  .svc-item.active .svc-num { color: var(--accent); }
+  .svc-num { font-size: .72rem; font-weight: 800; color: var(--muted); width: 1.8rem; flex-shrink: 0; }
+  .svc-name { font-weight: 600; font-size: .95rem; }
+  .svc-arrow { margin-left: auto; color: var(--muted); font-size: .9rem; transition: color .2s; }
+  .svc-item.active .svc-arrow,
+  .svc-item:hover .svc-arrow { color: var(--accent); }
+  .svc-detail {
+    background: var(--surface); border: 0.5px solid var(--border2);
+    border-radius: 16px; padding: 2rem 2.25rem;
+    position: sticky; top: 6rem;
+  }
+  .svc-detail-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.8rem; font-weight: 400; margin-bottom: .75rem;
+  }
+  .svc-detail-desc { color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; font-weight: 400; }
+  .svc-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+  .tag {
+    font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+    padding: .3rem .75rem; border-radius: 20px;
+    background: var(--accent-dim); color: var(--accent);
+    border: 0.5px solid var(--accent-border);
+  }
+  .svc-price {
+    font-size: .8rem; color: var(--muted);
+    border-top: 0.5px solid var(--border); padding-top: 1rem; margin-top: 1rem;
+  }
+  .svc-price strong { color: var(--accent); font-weight: 700; }
+
+  /* ADD-ONS */
+  .addons-section { background: var(--surface); }
+  .addons-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem; margin-top: 3rem;
+  }
+  .addon-card {
+    background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+    transition: border-color .25s, transform .2s;
+    position: relative; overflow: hidden;
+  }
+  .addon-card:hover { border-color: var(--accent-border); transform: translateY(-2px); }
+  .addon-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity .25s;
+  }
+  .addon-card:hover::before { opacity: 1; }
+  .addon-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+  .addon-title { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+  .addon-desc { font-size: .88rem; color: var(--muted); line-height: 1.6; font-weight: 400; }
+  .addon-badge {
+    display: inline-block; margin-top: .9rem;
+    font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: .25rem .7rem; border-radius: 4px;
+    background: var(--accent-dim); color: var(--accent);
+    border: 0.5px solid var(--accent-border);
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem; margin-top: 3rem;
+  }
+  .plan {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+    transition: transform .2s;
+  }
+  .plan:hover { transform: translateY(-3px); }
+  .plan.featured {
+    background: var(--surface2);
+    border-color: var(--accent);
+    position: relative;
+  }
+  .plan-label {
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #0a0a08; background: var(--accent);
+    padding: .3rem .8rem; border-radius: 4px;
+    display: inline-block; margin-bottom: 1rem;
+  }
+  .plan-name {
+    font-family: 'Instrument Serif', serif; font-size: 1.8rem; font-weight: 400;
+    margin-bottom: .4rem;
+  }
+  .plan-price { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; font-weight: 400; }
+  .plan-price strong { font-size: 1.3rem; color: var(--accent); font-weight: 800; font-family: 'Syne', sans-serif; }
+  .plan-divider { border: none; border-top: 0.5px solid var(--border); margin: 1.25rem 0; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+  .plan-features li {
+    font-size: .85rem; color: var(--muted); display: flex; align-items: flex-start; gap: .6rem; font-weight: 400;
+  }
+  .plan-features li::before { content: '—'; color: var(--border2); flex-shrink: 0; }
+  .plan-features li.highlight { color: var(--text); }
+  .plan-btn {
+    margin-top: 1.75rem; width: 100%;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: .82rem;
+    letter-spacing: .04em; text-transform: uppercase;
+    padding: .8rem; border-radius: 8px; cursor: pointer;
+    transition: opacity .2s;
+    text-align: center; text-decoration: none; display: block;
+  }
+  .plan-btn-ghost {
+    background: transparent; color: var(--text);
+    border: 0.5px solid var(--border2);
+  }
+  .plan-btn-ghost:hover { border-color: var(--accent-border); color: var(--accent); }
+  .plan-btn-solid {
+    background: var(--accent); color: #0a0a08; border: none;
+  }
+  .plan-btn-solid:hover { opacity: .85; }
+
+  /* PATHSHALA */
+  .pathshala-section {
+    background: var(--bg);
+    border-top: 0.5px solid var(--border);
+  }
+  .pathshala-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  }
+  .pathshala-visual {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .pathshala-visual::after {
+    content: 'पाठशाला';
+    position: absolute; bottom: -1rem; right: -.5rem;
+    font-family: 'Instrument Serif', serif; font-size: 5rem;
+    color: rgba(184,245,90,0.05); pointer-events: none;
+    line-height: 1;
+  }
+  .course-item {
+    display: flex; align-items: center; gap: 1rem; padding: .9rem 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .course-item:last-child { border-bottom: none; }
+  .course-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--accent-dim); border: 0.5px solid var(--accent-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0;
+  }
+  .course-name { font-size: .88rem; font-weight: 600; }
+  .course-meta { font-size: .75rem; color: var(--muted); }
+  .course-badge {
+    margin-left: auto; font-size: .68rem; font-weight: 700;
+    padding: .2rem .6rem; border-radius: 4px; flex-shrink: 0;
+    background: rgba(255,255,255,0.06); color: var(--muted);
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--surface);
+    border-top: 0.5px solid var(--border);
+    text-align: center;
+  }
+  .cta-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 400; line-height: 1.1; letter-spacing: -.02em;
+    max-width: 600px; margin: 0 auto 1.5rem;
+  }
+  .cta-title em { font-style: italic; color: var(--accent); }
+  .cta-sub { color: var(--muted); margin: 0 auto 2.5rem; max-width: 440px; font-weight: 400; }
+  .cta-form {
+    display: flex; gap: .75rem; max-width: 420px; margin: 0 auto; flex-wrap: wrap;
+  }
+  .cta-input {
+    flex: 1; min-width: 200px;
+    background: var(--bg); border: 0.5px solid var(--border2);
+    color: var(--text); font-family: 'Syne', sans-serif; font-size: .9rem;
+    padding: .85rem 1.25rem; border-radius: 8px;
+    outline: none; transition: border-color .2s;
+  }
+  .cta-input:focus { border-color: var(--accent); }
+  .cta-input::placeholder { color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 5%; border-top: 0.5px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { font-size: 1rem; font-weight: 800; color: var(--text); }
+  .footer-logo span { color: var(--accent); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a {
+    font-size: .78rem; color: var(--muted); text-decoration: none;
+    font-weight: 600; transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy { font-size: .75rem; color: var(--muted); }
+
+  /* FADE IN */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .services-layout { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .pathshala-inner { grid-template-columns: 1fr; }
+    .hero-stats { flex-direction: column; width: 100%; }
+    .stat { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .stat:last-child { border-bottom: none; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">Aafno<span>.</span>Tech</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#addons">Solutions</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#pathshala">Pathshala</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-label">Digital agency — Pokhara, Nepal</div>
+  <h1 class="hero-h1">Build. Automate.<br><em>Grow.</em></h1>
+  <div class="hero-row">
+    <p class="hero-sub">We help Nepali businesses build digital products, automate operations, and scale their online presence with strategy that actually works.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Start a project →</a>
+      <a href="#services" class="btn-ghost">See our work</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Businesses served</div></div>
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Service areas</div></div>
+    <div class="stat"><div class="stat-num">3×</div><div class="stat-label">Avg. growth rate</div></div>
+    <div class="stat"><div class="stat-num">NPR 5k</div><div class="stat-label">Starting price</div></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item"><span class="ticker-dot"></span> Social Media Management</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Website Development</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> SEO & Local Rankings</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Paid Ads</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Automation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> E-commerce Setup</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Branding & Identity</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Analytics & Growth</span>
+    <!-- duplicate for infinite scroll -->
+    <span class="ticker-item"><span class="ticker-dot"></span> Social Media Management</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Website Development</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> SEO & Local Rankings</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Paid Ads</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Automation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> E-commerce Setup</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Branding & Identity</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Analytics & Growth</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-eyebrow">What we do</div>
+  <h2 class="section-title">Six ways we <em>grow</em><br>your business</h2>
+  <p class="section-sub">Every service is designed for the Nepali market — from local SEO to eSewa-integrated e-commerce.</p>
+
+  <div class="services-layout">
+    <div class="services-list">
+      <div class="svc-item active" onclick="setService(0, this)">
+        <span class="svc-num">01</span>
+        <span class="svc-name">Social Media Management</span>
+        <span class="svc-arrow">→</span>
+      </div>
+      <div class="svc-item" onclick="setService(1, this)">
+        <span class="svc-num">02</span>
+        <span class="svc-name">Website Development</span>
+        <span class="svc-arrow">→</span>
+      </div>
+      <div class="svc-item" onclick="setService(2, this)">
+        <span class="svc-num">03</span>
+        <span class="svc-name">SEO & Local Rankings</span>
+        <span class="svc-arrow">→</span>
+      </div>
+      <div class="svc-item" onclick="setService(3, this)">
+        <span class="svc-num">04</span>
+        <span class="svc-name">Paid Ads & Performance</span>
+        <span class="svc-arrow">→</span>
+      </div>
+      <div class="svc-item" onclick="setService(4, this)">
+        <span class="svc-num">05</span>
+        <span class="svc-name">Branding & Content</span>
+        <span class="svc-arrow">→</span>
+      </div>
+      <div class="svc-item" onclick="setService(5, this)">
+        <span class="svc-num">06</span>
+        <span class="svc-name">E-commerce Setup</span>
+        <span class="svc-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="svc-detail" id="svc-detail">
+      <div class="svc-detail-title" id="sd-title">Social Media Management</div>
+      <div class="svc-detail-desc" id="sd-desc">Full management of your Facebook, Instagram, and TikTok pages. We handle everything — monthly content calendars, post creation, reels, captions, comment replies, and DM management. The easiest entry point for most Nepali businesses.</div>
+      <div class="svc-tags" id="sd-tags">
+        <span class="tag">Facebook</span>
+        <span class="tag">Instagram</span>
+        <span class="tag">TikTok</span>
+        <span class="tag">Reels & Content</span>
+        <span class="tag">Engagement</span>
+      </div>
+      <div class="svc-price" id="sd-price">Starts at <strong>NPR 5,000 / month</strong> — Starter package</div>
+    </div>
+  </div>
+</section>
+
+<!-- ADD-ONS -->
+<section id="addons" class="addons-section">
+  <div class="section-eyebrow">Edge services</div>
+  <h2 class="section-title">Where we stand <em>apart</em></h2>
+  <p class="section-sub">High-value solutions that most Nepal agencies don't offer — yet. This is your competitive edge.</p>
+
+  <div class="addons-grid fade-in">
+    <div class="addon-card">
+      <div class="addon-icon">🤖</div>
+      <div class="addon-title">AI Chatbots & Automation</div>
+      <div class="addon-desc">Facebook and WhatsApp chatbots, auto-reply lead systems, CRM setup, and AI-powered content generation for your business. Respond to leads 24/7 without lifting a finger.</div>
+      <span class="addon-badge">Biggest edge in Nepal</span>
+    </div>
+    <div class="addon-card">
+      <div class="addon-icon">📊</div>
+      <div class="addon-title">Analytics & Growth Strategy</div>
+      <div class="addon-desc">Live business performance dashboards, customer behaviour analysis, and a clear growth roadmap. We don't just post content — we help you understand what's working and what to do next.</div>
+      <span class="addon-badge">Data-driven</span>
+    </div>
+    <div class="addon-card">
+      <div class="addon-icon">⚡</div>
+      <div class="addon-title">Lead Generation Systems</div>
+      <div class="addon-desc">End-to-end sales funnels — from ad to landing page to automated follow-up. Designed specifically for Nepali businesses to capture and convert leads efficiently.</div>
+      <span class="addon-badge">High ROI</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-eyebrow">Transparent pricing</div>
+  <h2 class="section-title">Simple packages,<br><em>real results</em></h2>
+  <p class="section-sub">Designed for Nepali businesses of every size. Upgrade or adjust anytime.</p>
+
+  <div class="pricing-grid fade-in">
+    <div class="plan">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price"><strong>NPR 5k–10k</strong> / month</div>
+      <hr class="plan-divider"/>
+      <ul class="plan-features">
+        <li class="highlight">Social media management</li>
+        <li class="highlight">Monthly content calendar</li>
+        <li>3–4 posts per week</li>
+        <li>Comment & DM handling</li>
+        <li>Basic performance report</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-ghost">Get started</a>
+    </div>
+
+    <div class="plan featured">
+      <div class="plan-label">Most popular</div>
+      <div class="plan-name">Growth</div>
+      <div class="plan-price"><strong>NPR 15k–30k</strong> / month</div>
+      <hr class="plan-divider"/>
+      <ul class="plan-features">
+        <li class="highlight">Everything in Starter</li>
+        <li class="highlight">Facebook & Google Ads</li>
+        <li class="highlight">Local SEO & Google My Business</li>
+        <li>Keyword research</li>
+        <li>Monthly analytics report</li>
+        <li>Lead generation funnel</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-solid">Get started</a>
+    </div>
+
+    <div class="plan">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price"><strong>NPR 40k+</strong> / month</div>
+      <hr class="plan-divider"/>
+      <ul class="plan-features">
+        <li class="highlight">Everything in Growth</li>
+        <li class="highlight">Website or e-commerce build</li>
+        <li class="highlight">AI chatbot & automation</li>
+        <li class="highlight">Full branding package</li>
+        <li>Custom dashboard</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <a href="#contact" class="plan-btn plan-btn-ghost">Get started</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-eyebrow">Selected work</div>
+  <h2 class="section-title">Built with clarity,<br><em>performance</em> and trust</h2>
+  <p class="section-sub">Real projects and digital experiences designed for modern brands and businesses.</p>
+
+  <div class="addons-grid fade-in" style="margin-top:3rem;">
+    <div class="addon-card">
+      <div class="addon-icon">🌐</div>
+      <div class="addon-title">anarayan.com.np</div>
+      <div class="addon-desc">
+        Personal portfolio and digital identity platform showcasing full-stack projects, UI systems, backend architecture, and deployment workflows. Built with performance-focused modern web technologies.
+      </div>
+      <span class="addon-badge">Featured Project</span>
+    </div>
+
+    <div class="addon-card">
+      <div class="addon-icon">⚡</div>
+      <div class="addon-title">Fast & Optimized</div>
+      <div class="addon-desc">
+        Mobile-first layouts, optimized loading speeds, SEO-friendly structure, and responsive UI experiences built to feel premium across all devices.
+      </div>
+      <span class="addon-badge">Performance Focused</span>
+    </div>
+
+    <div class="addon-card">
+      <div class="addon-icon">🛠️</div>
+      <div class="addon-title">Modern Stack</div>
+      <div class="addon-desc">
+        Next.js, React, Node.js, MongoDB, Firebase, automation systems, cloud deployment, and scalable architectures for growing businesses.
+      </div>
+      <span class="addon-badge">Modern Technology</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section id="contact" class="cta-section">
+  <div class="section-eyebrow" style="justify-content:center;">
+    Let's talk
+  </div>
+
+  <h2 class="cta-title">
+    Ready to build your<br><em>digital presence?</em>
+  </h2>
+
+  <p class="cta-sub">
+    Tell us about your business, project, or idea. We’ll get back to you within 24 hours.
+  </p>
+
+  <form class="cta-form" onsubmit="sendMail(event)" style="max-width:560px;">
+    <input
+      type="text"
+      id="nameInput"
+      class="cta-input"
+      placeholder="Your name"
+      required
+    />
+
+    <input
+      type="text"
+      id="contactInput"
+      class="cta-input"
+      placeholder="Your email or phone"
+      required
+    />
+
+    <textarea
+      id="messageInput"
+      class="cta-input"
+      placeholder="Tell us about your project..."
+      rows="5"
+      style="width:100%;resize:none;"
+      required
+    ></textarea>
+
+    <button
+      type="submit"
+      class="btn-primary"
+      style="white-space:nowrap;width:100%;"
+    >
+      Let's talk →
+    </button>
+  </form>
+
+  <div
+    style="
+      display:flex;
+      justify-content:center;
+      gap:1rem;
+      margin-top:1.5rem;
+      flex-wrap:wrap;
+    "
+  >
+    <a
+      href="https://www.facebook.com/share/1FQp8Ys2bQ/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-ghost"
+    >
+      Facebook Page
+    </a>
+
+    <a
+      href="mailto:aafnopathshala@gmail.com"
+      class="btn-ghost"
+    >
+      Email Us
+    </a>
+  </div>
+
+  <p
+    style="
+      font-size:.75rem;
+      color:var(--muted);
+      margin-top:1rem;
+    "
+  >
+    Based in Pokhara · Serving businesses across Nepal
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    Aafno<span>.</span>Pathshala
+  </div>
+
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#portfolio">Projects</a>
+    <a href="#pricing">Pricing</a>
+
+    <a
+      href="https://www.facebook.com/share/1FQp8Ys2bQ/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Facebook
+    </a>
+
+    <a href="mailto:aafnopathshala@gmail.com">
+      Gmail
+    </a>
+  </div>
+
+  <div class="footer-copy">
+    © 2026 Aafno Pathshala · Pokhara, Nepal
+  </div>
+</footer>
+
+<script>
+function sendMail(event) {
+  event.preventDefault();
+
+  const name = document.getElementById('nameInput').value.trim();
+  const contact = document.getElementById('contactInput').value.trim();
+  const message = document.getElementById('messageInput').value.trim();
+
+  const subject = encodeURIComponent(
+    "New Inquiry - Aafno Pathshala"
+  );
+
+  const body = encodeURIComponent(
+`Hello Aafno Pathshala,
+
+You received a new inquiry from your website.
+
+Name:
+${name}
+
+Contact:
+${contact}
+
+Project Details:
+${message}
+
+Sent from Aafno Pathshala website.`
+  );
+
+  window.location.href =
+    `mailto:aafnopathshala@gmail.com?subject=${subject}&body=${body}`;
+}
+</script>
+
+
+<script>
+const services = [
+  {
+    title: "Social Media Management",
+    desc: "Full management of your Facebook, Instagram, and TikTok pages. We handle everything — monthly content calendars, post creation, reels, captions, comment replies, and DM management. The easiest entry point for most Nepali businesses.",
+    tags: ["Facebook", "Instagram", "TikTok", "Reels & Content", "Engagement"],
+    price: "Starts at <strong>NPR 5,000 / month</strong> — Starter package"
+  },
+  {
+    title: "Website Development",
+    desc: "Custom websites built on MERN / Next.js — from portfolios and landing pages to full e-commerce. We also handle hosting, domain setup, speed optimisation, and UI improvements for existing sites.",
+    tags: ["Next.js", "MERN Stack", "Hosting & Domain", "SEO-ready", "Mobile First"],
+    price: "One-time from <strong>NPR 25,000</strong> + optional monthly maintenance"
+  },
+  {
+    title: "SEO & Local Rankings",
+    desc: "Get found on Google by people searching 'cafe Pokhara' or 'best hostel Pokhara'. We do keyword research, on-page SEO, Google My Business optimisation, and content strategy to drive organic traffic.",
+    tags: ["Local SEO", "Google My Business", "Keyword Research", "Blog Strategy"],
+    price: "Starting at <strong>NPR 8,000 / month</strong>"
+  },
+  {
+    title: "Paid Ads & Performance",
+    desc: "Facebook, Instagram, and Google Ads managed to bring you qualified leads and sales. We set up the full funnel — ad creative, targeting, landing page, and follow-up — and optimise weekly for results.",
+    tags: ["Facebook Ads", "Google Ads", "Lead Generation", "Sales Funnels"],
+    price: "Management fee from <strong>NPR 10,000 / month</strong> + ad spend"
+  },
+  {
+    title: "Branding & Content",
+    desc: "Your logo, brand colours, typography, and visual identity — built for recognition and trust. Plus product photography ideas, social media visual themes, and copywriting for ads and captions.",
+    tags: ["Logo Design", "Brand Identity", "Copywriting", "Visual Theme"],
+    price: "Branding packages from <strong>NPR 15,000</strong> one-time"
+  },
+  {
+    title: "E-commerce Setup",
+    desc: "Custom online shops with Khalti and eSewa payment integration — no Shopify fees. Product listing, cart, checkout, and funnel optimisation all built for the Nepali buyer experience.",
+    tags: ["Khalti Integration", "eSewa", "Product Listings", "Custom Cart"],
+    price: "E-commerce builds from <strong>NPR 40,000</strong>"
+  }
+];
+
+function setService(i, el) {
+  document.querySelectorAll('.svc-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  const s = services[i];
+  document.getElementById('sd-title').textContent = s.title;
+  document.getElementById('sd-desc').textContent = s.desc;
+  document.getElementById('sd-price').innerHTML = 'Starts at ' + s.price;
+  const tags = document.getElementById('sd-tags');
+  tags.innerHTML = s.tags.map(t => `<span class="tag">${t}</span>`).join('');
+}
+
+
+// Fade-in on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
