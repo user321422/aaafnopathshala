@@ -128,6 +128,16 @@
       return urlParams.get(param);
     }
 
+    async function tryFetchJson(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Network response not ok');
+        return await res.json();
+      } catch (e) {
+        throw e;
+      }
+    }
+
     async function loadPost() {
       const postId = getQueryParam('id');
       if (!postId) {
@@ -135,56 +145,74 @@
         return;
       }
 
-      try {
-        const response = await fetch('blogs.json');
-        const blogs = await response.json();
-        const post = blogs.find(b => b.id === postId);
-
-        if (!post) {
-          document.getElementById('post-content').innerHTML = '<p>Post not found.</p>';
-          return;
+      const attempts = ['blogs.json', window.location.origin + '/blogs.json'];
+      let blogs = null;
+      for (const url of attempts) {
+        try {
+          blogs = await tryFetchJson(url);
+          break;
+        } catch (err) {
+          // try next
         }
-
-        // Update page title and meta
-        document.title = post.title + ' — aafnotech';
-        document.querySelector('meta[name="description"]').content = post.excerpt;
-
-        // Format date
-        const date = new Date(post.date);
-        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-        // Render post
-        document.getElementById('post-content').innerHTML = `
-          <div class="post-header">
-            <div class="post-meta">${post.category}</div>
-            <h1>${post.title}</h1>
-            <div class="post-info">
-              <span>By ${post.author}</span>
-              <span>${formattedDate}</span>
-              <span>${post.readTime}</span>
-            </div>
-          </div>
-          <div class="post-content">
-            ${post.content.split('\n').map(para => {
-              if (para.startsWith('##')) {
-                return `<h2>${para.replace('##', '').trim()}</h2>`;
-              } else if (para.startsWith('###')) {
-                return `<h3>${para.replace('###', '').trim()}</h3>`;
-              } else if (para.startsWith('1.') || para.startsWith('2.') || para.startsWith('3.') || para.startsWith('4.') || para.startsWith('5.') || para.startsWith('6.')) {
-                return `<li>${para.replace(/^\d+\.\s*/, '').trim()}</li>`;
-              } else if (para.startsWith('-')) {
-                return `<li>${para.replace(/^-\s*/, '').trim()}</li>`;
-              } else if (para.trim()) {
-                return `<p>${para.trim()}</p>`;
-              }
-              return '';
-            }).join('')}
-          </div>
-        `;
-      } catch (error) {
-        console.error('Error loading post:', error);
-        document.getElementById('post-content').innerHTML = '<p>Error loading post.</p>';
       }
+
+      if (!blogs) {
+        console.error('Failed to load blogs.json');
+        document.getElementById('post-content').innerHTML = `
+          <div style="padding:1rem;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.05)">
+            <p style="color:var(--muted)">Could not load the post data. If you are viewing files locally, run a local HTTP server (for example: <code>python -m http.server</code>) or view the site from your deployed URL.</p>
+          </div>`;
+        return;
+      }
+
+      const post = blogs.find(b => b.id === postId);
+      if (!post) {
+        document.getElementById('post-content').innerHTML = '<p>Post not found.</p>';
+        return;
+      }
+
+      // Update page title and meta
+      document.title = post.title + ' — aafnotech';
+      const descMeta = document.querySelector('meta[name="description"]');
+      if (descMeta) descMeta.content = post.excerpt || '';
+
+      // Format date safely
+      let formattedDate = '';
+      if (post.date) {
+        const date = new Date(post.date);
+        if (!isNaN(date)) {
+          formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+      }
+
+      // Render post
+      document.getElementById('post-content').innerHTML = `
+        <div class="post-header">
+          <div class="post-meta">${post.category || ''}</div>
+          <h1>${post.title}</h1>
+          <div class="post-info">
+            <span>By ${post.author || ''}</span>
+            <span>${formattedDate}</span>
+            <span>${post.readTime || ''}</span>
+          </div>
+        </div>
+        <div class="post-content">
+          ${post.content.split('\n').map(para => {
+            if (para.startsWith('###')) {
+              return `<h3>${para.replace('###', '').trim()}</h3>`;
+            } else if (para.startsWith('##')) {
+              return `<h2>${para.replace('##', '').trim()}</h2>`;
+            } else if (/^\d+\.\s+/.test(para)) {
+              return `<li>${para.replace(/^\d+\.\s*/, '').trim()}</li>`;
+            } else if (para.startsWith('-')) {
+              return `<li>${para.replace(/^-\s*/, '').trim()}</li>`;
+            } else if (para.trim()) {
+              return `<p>${para.trim()}</p>`;
+            }
+            return '';
+          }).join('')}
+        </div>
+      `;
     }
 
     loadPost();

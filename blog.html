@@ -139,32 +139,58 @@
 
   <script>
     // Load and display blog posts
-    async function loadBlogs() {
+    async function tryFetchJson(url) {
       try {
-        const response = await fetch('blogs.json');
-        const blogs = await response.json();
-        const container = document.getElementById('posts-container');
-        
-        // Sort by date (newest first)
-        blogs.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        container.innerHTML = blogs.map(blog => `
-          <a href="blog-post.html?id=${blog.id}" class="post-card">
-            <div class="post-meta">${blog.category}</div>
-            <h2 class="post-title">${blog.title}</h2>
-            <p class="post-excerpt">${blog.excerpt}</p>
-            <div class="post-footer">
-              <span class="post-author">${blog.author}</span>
-              <span class="post-time">${blog.readTime}</span>
-            </div>
-          </a>
-        `).join('');
-      } catch (error) {
-        console.error('Error loading blogs:', error);
-        document.getElementById('posts-container').innerHTML = '<p>Error loading blog posts.</p>';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Network response not ok');
+        return await res.json();
+      } catch (e) {
+        throw e;
       }
     }
-    
+
+    async function loadBlogs() {
+      const container = document.getElementById('posts-container');
+      // Try relative path first, then absolute origin path.
+      const attempts = ['blogs.json', window.location.origin + '/blogs.json'];
+      let blogs = null;
+      for (const url of attempts) {
+        try {
+          blogs = await tryFetchJson(url);
+          break;
+        } catch (err) {
+          // continue to next attempt
+        }
+      }
+
+      if (!blogs) {
+        console.error('Failed to load blogs.json from any known location.');
+        container.innerHTML = `
+          <div style="padding:1rem;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.05)">
+            <p style="color:var(--muted)">Could not load blog posts. If you are viewing the files locally, run a local HTTP server (for example: <code>python -m http.server</code>) or view the site from your deployed URL.</p>
+          </div>`;
+        return;
+      }
+
+      try {
+        blogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+      } catch (e) {
+        console.warn('Error sorting blogs by date:', e);
+      }
+
+      container.innerHTML = blogs.map(blog => `
+        <a href="blog-post.html?id=${encodeURIComponent(blog.id)}" class="post-card">
+          <div class="post-meta">${blog.category || ''}</div>
+          <h2 class="post-title">${blog.title}</h2>
+          <p class="post-excerpt">${blog.excerpt || ''}</p>
+          <div class="post-footer">
+            <span class="post-author">${blog.author || ''}</span>
+            <span class="post-time">${blog.readTime || ''}</span>
+          </div>
+        </a>
+      `).join('');
+    }
+
     loadBlogs();
   </script>
 </body>
