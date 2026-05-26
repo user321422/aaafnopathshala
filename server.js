@@ -5,14 +5,20 @@ const path = require('path');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const morgan = require('morgan');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 
 const app = express();
 const BLOGS_FILE = path.join(__dirname, 'blogs.json');
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme';
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'please-change-this-secret';
+let writeQueue = Promise.resolve();
+const publishStatus = {
+  lastAttemptAt: null,
+  lastSuccessAt: null,
+  lastError: null,
+  lastMethod: null,
+  lastTarget: null
+};
 
 app.use(cors());
 app.use(express.json());
@@ -27,9 +33,14 @@ async function readBlogs(){
   return JSON.parse(raw);
 }
 async function writeBlogs(data){
-  const tmp = BLOGS_FILE + '.tmp';
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2), 'utf8');
-  await fs.rename(tmp, BLOGS_FILE);
+  // Serialize writes to avoid tmp-file rename races under concurrent requests.
+  writeQueue = writeQueue.then(async () => {
+    await fs.mkdir(path.dirname(BLOGS_FILE), { recursive: true });
+    const tmp = `${BLOGS_FILE}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`;
+    await fs.writeFile(tmp, JSON.stringify(data, null, 2), 'utf8');
+    await fs.rename(tmp, BLOGS_FILE);
+  });
+  return writeQueue;
 }
 
 async function pushToGit(){
@@ -37,35 +48,73 @@ async function pushToGit(){
   const repo = process.env.GITHUB_REPO; // e.g. user321422/aaafnopathshala
   const branch = process.env.GITHUB_BRANCH || 'main';
   if (!token || !repo) {
+    publishStatus.lastMethod = 'skip';
+    publishStatus.lastTarget = 'blogs.json';
+    publishStatus.lastError = 'Missing GITHUB_TOKEN or GITHUB_REPO';
     return;
   }
-  // Use HTTPS remote with token for authenticated push
-  const remoteUrl = `https://x-access-token:${token}@github.com/${repo}.git`;
-  try{
-    // configure git user
-    const out1 = await exec('git config user.email "render@aafnotech"', {cwd: __dirname});
-    const out2 = await exec('git config user.name "aafnotech-bot"', {cwd: __dirname});
-    console.log('git config set:', out1.stdout || '', out2.stdout || '');
-    // set remote temporarily
-    const outRemote = await exec(`git remote set-url origin ${remoteUrl}`, {cwd: __dirname});
-    console.log('git remote set-url:', outRemote.stdout || outRemote.stderr || '');
-    // add, commit if there are changes, and push
-    const outAdd = await exec('git add blogs.json', {cwd: __dirname});
-    console.log('git add:', outAdd.stdout || outAdd.stderr || '');
-    // commit may fail if no changes; capture output
-    try{
-      const outCommit = await exec('git commit -m "Auto-update blogs.json [render]"', {cwd: __dirname});
-      console.log('git commit:', outCommit.stdout || outCommit.stderr || '');
-    } catch(commitErr){
-      console.log('git commit (no changes or commit error):', commitErr.message || commitErr.stderr || commitErr);
+  publishStatus.lastAttemptAt = new Date().toISOString();
+  publishStatus.lastMethod = 'github-contents-api';
+  publishStatus.lastTarget = 'blogs.json';
+  publishStatus.lastError = null;
+
+  try {
+    const normalizedRepo = repo
+      .replace(/^https?:\/\/github\.com\//, '')
+      .replace(/\.git$/, '')
+      .replace(/^\/+/, '')
+      .trim();
+
+    if (!normalizedRepo.includes('/')) {
+      throw new Error('GITHUB_REPO must be in the format "owner/repo"');
     }
-    const outPush = await exec(`git push origin ${branch}`, {cwd: __dirname});
-    console.log('git push stdout:', outPush.stdout || '');
-    console.log('blogs.json pushed to GitHub');
-  } catch (err){
-    console.error('Failed to push blogs.json to GitHub:', err.message || err);
-    if (err.stdout) console.error('stdout:', err.stdout);
-    if (err.stderr) console.error('stderr:', err.stderr);
+
+    const apiBase = `https://api.github.com/repos/${normalizedRepo}/contents/blogs.json`;
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'User-Agent': 'aafnotech-blog-admin',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    // Get existing file SHA (required by GitHub API to update existing files)
+    let currentSha;
+    const getRes = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers });
+    if (getRes.ok) {
+      const current = await getRes.json();
+      currentSha = current.sha;
+    } else if (getRes.status !== 404) {
+      const details = await getRes.text();
+      throw new Error(`Failed to read current blogs.json from GitHub (${getRes.status}): ${details}`);
+    }
+
+    const blogsRaw = await fs.readFile(BLOGS_FILE, 'utf8');
+    const contentBase64 = Buffer.from(blogsRaw, 'utf8').toString('base64');
+
+    const body = {
+      message: 'Auto-update blogs.json [render]',
+      content: contentBase64,
+      branch
+    };
+    if (currentSha) body.sha = currentSha;
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body)
+    });
+
+    if (!putRes.ok) {
+      const details = await putRes.text();
+      throw new Error(`Failed to publish blogs.json to GitHub (${putRes.status}): ${details}`);
+    }
+
+    publishStatus.lastSuccessAt = new Date().toISOString();
+    publishStatus.lastError = null;
+    console.log('blogs.json published to GitHub via Contents API');
+  } catch (err) {
+    publishStatus.lastError = err.message || String(err);
+    console.error('Failed to publish blogs.json to GitHub:', err.message || err);
   }
 }
 
@@ -103,6 +152,11 @@ app.get('/api/blogs', async (req, res) => {
     console.error(err);
     res.status(500).json({error:'Failed to read blogs'});
   }
+});
+
+// Protected: check publish diagnostics
+app.get('/api/push-status', authMiddleware, async (req, res) => {
+  res.json(publishStatus);
 });
 
 // Protected: create blog
