@@ -219,3 +219,8 @@ app.listen(PORT, ()=>{
   console.log(`Blog admin server running on http://localhost:${PORT}`);
   console.log(`Admin UI: http://localhost:${PORT}/admin`);
 });
+
+// Redirect root to the admin UI so visiting the service hostname shows the admin
+app.get('/', (req, res) => {
+  res.redirect('/admin');
+});
