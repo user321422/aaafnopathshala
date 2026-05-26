@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blog Post — aafnotech</title>
+  <meta name="description" content="Read articles about web development, SEO, and digital solutions." />
+  <meta name="robots" content="index, follow" />
+  <style>
+    :root{
+      --bg:#f7f7f4;
+      --surface:#fff;
+      --muted:#666;
+      --text:#111;
+      --accent:#6cab2f;
+      --border:rgba(0,0,0,0.08);
+      --nav-height:70px;
+      --max-width:900px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;display:flex;flex-direction:column;min-height:100%}
+
+    nav{position:sticky;top:0;z-index:120;display:flex;align-items:center;justify-content:space-between;padding:.9rem 5%;min-height:var(--nav-height);background:var(--surface);border-bottom:1px solid var(--border)}
+    .logo{font-weight:800;color:var(--text);text-decoration:none;font-size:1.05rem;letter-spacing:.02em}
+    .nav-links{display:flex;gap:1.15rem;list-style:none;align-items:center;flex-wrap:wrap}
+    .nav-links a{color:var(--muted);text-decoration:none;font-weight:600;position:relative;padding:.15rem 0;transition:color .18s}
+    .nav-links a::after{content:'';position:absolute;left:0;right:0;height:2px;background:var(--accent);bottom:-6px;transform:scaleX(0);transform-origin:left;transition:transform .22s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-links a:hover::after{transform:scaleX(1)}
+    .nav-links a[aria-current="page"]{color:var(--text)}
+    .nav-links a[aria-current="page"]::after{transform:scaleX(1)}
+    .dropdown{position:relative}
+    .dropdown-toggle{display:inline-flex;align-items:center;gap:.3rem;color:var(--muted);text-decoration:none;font-weight:600;cursor:pointer}
+    .dropdown-toggle::after{content:'▾';font-size:.72rem;line-height:1;transform:translateY(-1px)}
+    .dropdown-menu{position:absolute;top:100%;right:0;min-width:180px;list-style:none;padding:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none}
+    .dropdown-menu li a{display:block;padding:.45rem .55rem;border-radius:6px}
+    .dropdown-menu li a::after{display:none}
+    .dropdown:hover .dropdown-menu,
+    .dropdown:focus-within .dropdown-menu{display:block}
+
+    main{margin-top:0;flex:1}
+    .section{padding:3rem 5%;border-bottom:1px solid rgba(0,0,0,.03)}
+    .wrap{max-width:var(--max-width);margin:0 auto}
+    .post-header{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+    .post-meta{font-size:.8rem;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem}
+    h1{font-family:Georgia,serif;font-size:2.6rem;margin-bottom:.8rem;line-height:1.2}
+    .post-info{display:flex;gap:1.5rem;font-size:.9rem;color:var(--muted)}
+    .post-info span{display:flex;align-items:center;gap:.3rem}
+    .post-content{font-size:1.05rem;line-height:1.8}
+    .post-content h2{font-family:Georgia,serif;font-size:1.6rem;margin-top:1.5rem;margin-bottom:.8rem;color:var(--text)}
+    .post-content h3{font-size:1.2rem;margin-top:1.2rem;margin-bottom:.6rem;color:var(--text)}
+    .post-content p{margin-bottom:1rem;color:var(--muted)}
+    .post-content ul,.post-content ol{margin-left:1.5rem;margin-bottom:1rem}
+    .post-content li{margin-bottom:.5rem;color:var(--muted)}
+    .post-content strong{color:var(--text);font-weight:700}
+    .back-link{display:inline-block;margin-top:2rem;color:var(--accent);text-decoration:none;font-weight:600}
+    .back-link:hover{text-decoration:underline}
+
+    footer{padding:1.5rem 5%;text-align:center;border-top:1px solid var(--border);color:var(--muted)}
+    footer a{color:var(--text);text-decoration:none;font-weight:600}
+
+    @media (max-width:900px){
+      :root{--nav-height:64px}
+      nav{padding:.8rem 4%}
+      .nav-links{gap:.9rem}
+      .logo{font-size:.98rem}
+      .nav-links a{font-size:.88rem}
+      .dropdown-menu{right:auto;left:0}
+      .section{padding:2.5rem 4%}
+      h1{font-size:2rem}
+      .post-content h2{font-size:1.4rem}
+    }
+
+    @media (max-width:600px){
+      :root{--nav-height:92px}
+      nav{flex-direction:column;align-items:flex-start;gap:.45rem;padding:.7rem 4%}
+      .logo{font-size:.95rem}
+      .nav-links{width:100%;gap:.9rem;flex-wrap:wrap}
+      .nav-links a{font-size:.83rem}
+      .dropdown-menu{position:static;display:block;box-shadow:none;border:none;padding:.2rem 0 0 .5rem}
+      .dropdown-toggle::after{display:none}
+      .section{padding:2rem 4%}
+      h1{font-size:1.7rem}
+      .post-info{flex-direction:column;gap:.5rem}
+      .post-content{font-size:1rem}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="index.html">aafnotech</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="portfolio.html">Portfolios</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" href="#" aria-label="Elements menu">Elements</a>
+        <ul class="dropdown-menu">
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="section">
+      <div class="wrap">
+        <div id="post-content">
+          <!-- Post content will be loaded here -->
+        </div>
+        <a href="blog.html" class="back-link">← Back to all posts</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 aafnotech · <a href="index.html">Back to home</a>
+  </footer>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadPost() {
+      const postId = getQueryParam('id');
+      if (!postId) {
+        document.getElementById('post-content').innerHTML = '<p>Post not found.</p>';
+        return;
+      }
+
+      try {
+        const response = await fetch('blogs.json');
+        const blogs = await response.json();
+        const post = blogs.find(b => b.id === postId);
+
+        if (!post) {
+          document.getElementById('post-content').innerHTML = '<p>Post not found.</p>';
+          return;
+        }
+
+        // Update page title and meta
+        document.title = post.title + ' — aafnotech';
+        document.querySelector('meta[name="description"]').content = post.excerpt;
+
+        // Format date
+        const date = new Date(post.date);
+        const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Render post
+        document.getElementById('post-content').innerHTML = `
+          <div class="post-header">
+            <div class="post-meta">${post.category}</div>
+            <h1>${post.title}</h1>
+            <div class="post-info">
+              <span>By ${post.author}</span>
+              <span>${formattedDate}</span>
+              <span>${post.readTime}</span>
+            </div>
+          </div>
+          <div class="post-content">
+            ${post.content.split('\n').map(para => {
+              if (para.startsWith('##')) {
+                return `<h2>${para.replace('##', '').trim()}</h2>`;
+              } else if (para.startsWith('###')) {
+                return `<h3>${para.replace('###', '').trim()}</h3>`;
+              } else if (para.startsWith('1.') || para.startsWith('2.') || para.startsWith('3.') || para.startsWith('4.') || para.startsWith('5.') || para.startsWith('6.')) {
+                return `<li>${para.replace(/^\d+\.\s*/, '').trim()}</li>`;
+              } else if (para.startsWith('-')) {
+                return `<li>${para.replace(/^-\s*/, '').trim()}</li>`;
+              } else if (para.trim()) {
+                return `<p>${para.trim()}</p>`;
+              }
+              return '';
+            }).join('')}
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error loading post:', error);
+        document.getElementById('post-content').innerHTML = '<p>Error loading post.</p>';
+      }
+    }
+
+    loadPost();
+  </script>
+</body>
+</html>
