@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+
+Sitemap: https://aafnopathshala.com/sitemap.xml
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1
