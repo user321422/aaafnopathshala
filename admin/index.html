@@ -99,7 +99,13 @@
   </div>
 
 <script>
-const base = window.location.origin;
+// Determine API base: prefer current origin when running on Render, otherwise fall back to the Render URL
+const RENDER_HOSTNAME = 'aaafnopathshala.onrender.com';
+const API_BASE = (window.location.hostname === RENDER_HOSTNAME || window.location.hostname.endsWith('.onrender.com'))
+  ? window.location.origin
+  : 'https://aaafnopathshala.onrender.com';
+
+const base = API_BASE; // kept for compatibility with earlier code
 let token = localStorage.getItem('aaf_admin_token') || null;
 if (token) showApp();
 
@@ -107,7 +113,7 @@ async function api(path, opts={}){
   opts.headers = opts.headers || {};
   opts.headers['Content-Type'] = 'application/json';
   if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-  const res = await fetch('/api'+path, opts);
+  const res = await fetch(API_BASE + '/api' + path, opts);
   if (res.status === 401) {
     alert('Unauthorized — please log in again');
     logout();
@@ -120,7 +126,7 @@ document.getElementById('login').addEventListener('click', async ()=>{
   const pw = document.getElementById('pw').value.trim();
   if (!pw) return alert('Enter password');
   try{
-    const r = await fetch('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:pw})});
+    const r = await fetch(API_BASE + '/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:pw})});
     const j = await r.json();
     if (j.token) {
       token = j.token; localStorage.setItem('aaf_admin_token', token);
