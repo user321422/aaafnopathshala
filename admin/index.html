@@ -137,10 +137,10 @@
 
 <script>
 // Determine API base: prefer current origin when running on Render, otherwise fall back to the Render URL
-const RENDER_HOSTNAME = 'aaafnopathshala.onrender.com';
+const RENDER_HOSTNAME = 'aafnotech-admin.onrender.com';
 const API_BASE = (window.location.hostname === RENDER_HOSTNAME || window.location.hostname.endsWith('.onrender.com'))
   ? window.location.origin
-  : 'https://aaafnopathshala.onrender.com';
+  : 'https://aafnotech-admin.onrender.com';
 
 const base = API_BASE; // kept for compatibility with earlier code
 let token = localStorage.getItem('aaf_admin_token') || null;

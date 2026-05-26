@@ -8,7 +8,7 @@ This is the most important step to get your site indexed by Google.
 **Steps:**
 1. Go to https://search.google.com/search-console
 2. Sign in with your Google account
-3. Click "URL prefix" and enter: `https://aafnopathshala.com`
+3. Click "URL prefix" and enter: `https://aafnotech.com`
 4. Verify ownership by:
    - Option A: Add DNS record (recommended for domain owners)
    - Option B: Download HTML file and upload to your site root
@@ -23,12 +23,12 @@ This is the most important step to get your site indexed by Google.
 ### 2. Request Indexing
 Once verified in Google Search Console:
 1. Go to URL Inspection tool
-2. Enter your homepage: `https://aafnopathshala.com`
+2. Enter your homepage: `https://aafnotech.com`
 3. Click "Request Indexing"
 4. Repeat for:
-   - https://aafnopathshala.com/about.html
-   - https://aafnopathshala.com/portfolio.html
-   - https://aafnopathshala.com/faq.html
+   - https://aafnotech.com/about.html
+   - https://aafnotech.com/portfolio.html
+   - https://aafnotech.com/faq.html
 
 ### 3. Add Meta Tag for Google (Alternative)
 Already added to all pages:

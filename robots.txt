@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Specify sitemap location for search engines
-Sitemap: https://aafnopathshala.com/sitemap.xml
+Sitemap: https://aafnotech.com/sitemap.xml
 
 # Specific rules for Google
 User-agent: Googlebot
