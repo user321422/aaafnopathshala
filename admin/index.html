@@ -5,24 +5,48 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>aafnotech Blog Admin</title>
   <style>
-    body{font-family:system-ui,Arial,sans-serif;background:#f7f7f4;color:#111;padding:24px}
-    .card{background:#fff;border-radius:10px;padding:16px;border:1px solid rgba(0,0,0,.06);max-width:1100px;margin:12px auto}
-    h1{font-family:Georgia,serif}
+    :root{
+      --bg:#f7f7f4;
+      --surface:#fff;
+      --surface-soft:#fafafa;
+      --text:#111;
+      --muted:#666;
+      --accent:#6cab2f;
+      --accent-soft:rgba(108,171,47,.12);
+      --border:rgba(0,0,0,.08);
+      --shadow:0 16px 40px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding:24px}
+    h1,h2,h3{font-family:Georgia,serif}
+    .card{background:var(--surface);border-radius:16px;padding:18px;border:1px solid var(--border);max-width:1200px;margin:14px auto;box-shadow:var(--shadow)}
     label{display:block;margin:8px 0 4px;font-weight:700}
-    input,textarea,select{width:100%;padding:8px;border:1px solid rgba(0,0,0,.08);border-radius:6px}
-    .grid-2{display:grid;grid-template-columns:1fr 360px;gap:18px}
-    .btn{display:inline-block;padding:8px 12px;background:#6cab2f;color:#fff;border-radius:8px;text-decoration:none;border:0;cursor:pointer}
-    .btn.ghost{background:transparent;color:#6cab2f;border:1px solid rgba(108,171,47,.12)}
+    input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font:inherit;background:#fff}
+    input:focus,textarea:focus{outline:2px solid rgba(108,171,47,.18);border-color:rgba(108,171,47,.38)}
+    .grid-2{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:9px 13px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;border:0;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent-soft)}
+    .btn.tool{padding:7px 10px;background:var(--surface-soft);color:var(--text);border:1px solid var(--border);font-weight:600}
+    .btn.tool:hover,.btn.ghost:hover{border-color:rgba(108,171,47,.28)}
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px}
     .list{margin-top:12px}
-    .post-item{padding:10px;border-bottom:1px solid rgba(0,0,0,.04);display:flex;justify-content:space-between;align-items:center}
-    .meta{font-size:.85rem;color:#666}
-    .controls{display:flex;gap:6px}
-    .input-inline{display:flex;gap:8px}
-    .small{font-size:.85rem;color:#666}
-    .preview{background:#fafafa;border:1px solid rgba(0,0,0,.04);padding:12px;border-radius:8px;margin-top:10px;max-height:420px;overflow:auto}
-    .preview h2{font-family:Georgia,serif;margin:0 0 .6rem}
-    .note{font-size:.85rem;color:#666;margin-top:8px}
-    .muted{color:#666;font-size:.9rem}
+    .post-item{padding:12px;border-bottom:1px solid rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+    .meta{font-size:.85rem;color:var(--muted);margin-top:4px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .small{font-size:.88rem;color:var(--muted)}
+    .preview{background:var(--surface-soft);border:1px solid var(--border);padding:14px;border-radius:12px;margin-top:10px;max-height:560px;overflow:auto}
+    .preview h2{font-family:Georgia,serif;margin:0 0 .6rem;font-size:1.45rem}
+    .preview h3{font-family:Georgia,serif;margin:1rem 0 .45rem;font-size:1.15rem}
+    .preview p{margin:.75rem 0;line-height:1.7;color:#222}
+    .preview ul,.preview ol{margin:.7rem 0 .7rem 1.4rem}
+    .preview li{margin:.35rem 0;line-height:1.65}
+    .preview blockquote{margin:.9rem 0;padding:.6rem .9rem;border-left:4px solid var(--accent);background:#fff;border-radius:0 10px 10px 0;color:#333}
+    .preview img{max-width:100%;border-radius:12px;margin:.9rem 0;display:block}
+    .preview a{color:var(--accent);text-decoration:none}
+    .preview a:hover{text-decoration:underline}
+    .muted{color:var(--muted);font-size:.92rem}
+    .editor-help{font-size:.85rem;color:var(--muted);margin-top:8px;line-height:1.5}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
   </style>
 </head>
 <body>
@@ -44,7 +68,6 @@
         <div class="small">Logged in</div>
       </div>
 
-      <div style="margin-top:12px;display:block">
       <div class="grid-2">
         <div>
           <label>Title</label>
@@ -53,8 +76,22 @@
           <label>Excerpt</label>
           <input id="excerpt" />
 
-          <label>Content (use `##` for headings and `-` or `1.` for lists)</label>
-          <textarea id="content" rows="10"></textarea>
+          <label>Content</label>
+          <div class="toolbar" aria-label="Editor tools">
+            <button type="button" class="btn tool" data-action="h2">H2</button>
+            <button type="button" class="btn tool" data-action="h3">H3</button>
+            <button type="button" class="btn tool" data-action="bold"><strong>B</strong></button>
+            <button type="button" class="btn tool" data-action="italic"><em>I</em></button>
+            <button type="button" class="btn tool" data-action="bullet">• List</button>
+            <button type="button" class="btn tool" data-action="numbered">1. List</button>
+            <button type="button" class="btn tool" data-action="quote">Quote</button>
+            <button type="button" class="btn tool" data-action="link">Link</button>
+            <button type="button" class="btn tool" data-action="image">Image</button>
+          </div>
+          <textarea id="content" rows="14" placeholder="Write in Markdown. Use headings, lists, links, and image syntax."></textarea>
+          <div class="editor-help">
+            Tips: use <strong>##</strong> and <strong>###</strong> for subheadings, <strong>![alt](url)</strong> for images, <strong>[text](url)</strong> for links, and <strong>&gt; quote</strong> for callouts.
+          </div>
 
           <div style="display:flex;gap:8px;margin-top:8px">
             <div style="flex:1">
@@ -83,17 +120,17 @@
             <button id="clear" class="btn ghost">Clear</button>
           </div>
         </div>
-
-        </div>
         <div>
-          <div style="font-weight:700;margin-bottom:8px">Preview</div>
+          <div class="section-head">
+            <div style="font-weight:700">Preview</div>
+            <div class="small">Live render of Markdown content</div>
+          </div>
           <div id="preview" class="preview">
             <div class="muted">Live preview will appear here as you type.</div>
           </div>
           <div style="font-weight:700;margin:12px 0 8px">Posts</div>
           <div id="posts" class="list"></div>
         </div>
-      </div>
       </div>
     </div>
   </div>
@@ -144,6 +181,190 @@ function showApp(){ document.getElementById('login-box').style.display='none'; d
 
 document.getElementById('refresh').addEventListener('click', loadPosts);
 
+function escapeHtml(value=''){
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function escapeAttr(value=''){
+  return escapeHtml(value).replace(/`/g,'&#96;');
+}
+
+function slugify(value){
+  return String(value).toLowerCase().trim()
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
+function computeReadTime(text){
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return minutes + ' min read';
+}
+
+function setDefaultDate(){
+  const field = document.getElementById('date');
+  if (!field.value) field.value = new Date().toISOString().slice(0,10);
+}
+
+function insertAtCursor(textarea, before, after=''){
+  const start = textarea.selectionStart || 0;
+  const end = textarea.selectionEnd || 0;
+  const selected = textarea.value.slice(start, end);
+  const replacement = before + selected + after;
+  textarea.value = textarea.value.slice(0, start) + replacement + textarea.value.slice(end);
+  const cursor = start + replacement.length;
+  textarea.focus();
+  textarea.setSelectionRange(cursor, cursor);
+  textarea.dispatchEvent(new Event('input', {bubbles:true}));
+}
+
+function insertBlock(textarea, block){
+  const start = textarea.selectionStart || 0;
+  const end = textarea.selectionEnd || 0;
+  const selected = textarea.value.slice(start, end);
+  const needsBreakBefore = start > 0 && !/^\n/.test(textarea.value.slice(start - 1, start));
+  const needsBreakAfter = end < textarea.value.length && !/^\n/.test(textarea.value.slice(end, end + 1));
+  const replacement = `${needsBreakBefore ? '\n' : ''}${block.replace('{{selected}}', selected)}${needsBreakAfter ? '\n' : ''}`;
+  textarea.value = textarea.value.slice(0, start) + replacement + textarea.value.slice(end);
+  textarea.focus();
+  textarea.setSelectionRange(start + replacement.length, start + replacement.length);
+  textarea.dispatchEvent(new Event('input', {bubbles:true}));
+}
+
+function transformInlineMarkdown(text){
+  return escapeHtml(text)
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+function renderMarkdown(source){
+  const lines = String(source || '').replace(/\r\n/g, '\n').split('\n');
+  const output = [];
+  let inUl = false;
+  let inOl = false;
+  let inBlockquote = false;
+
+  const closeLists = () => {
+    if (inUl) { output.push('</ul>'); inUl = false; }
+    if (inOl) { output.push('</ol>'); inOl = false; }
+    if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      closeLists();
+      continue;
+    }
+
+    const headingMatch = trimmed.match(/^(#{2,3})\s+(.*)$/);
+    if (headingMatch) {
+      closeLists();
+      const level = headingMatch[1].length;
+      output.push(`<h${level}>${transformInlineMarkdown(headingMatch[2])}</h${level}>`);
+      continue;
+    }
+
+    if (/^>\s+/.test(trimmed)) {
+      if (!inBlockquote) {
+        closeLists();
+        output.push('<blockquote>');
+        inBlockquote = true;
+      }
+      output.push(`<p>${transformInlineMarkdown(trimmed.replace(/^>\s+/, ''))}</p>`);
+      continue;
+    }
+
+    if (/^[-*]\s+/.test(trimmed)) {
+      if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+      if (!inUl) {
+        if (inOl) { output.push('</ol>'); inOl = false; }
+        output.push('<ul>');
+        inUl = true;
+      }
+      output.push(`<li>${transformInlineMarkdown(trimmed.replace(/^[-*]\s+/, ''))}</li>`);
+      continue;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+      if (!inOl) {
+        if (inUl) { output.push('</ul>'); inUl = false; }
+        output.push('<ol>');
+        inOl = true;
+      }
+      output.push(`<li>${transformInlineMarkdown(trimmed.replace(/^\d+\.\s+/, ''))}</li>`);
+      continue;
+    }
+
+    closeLists();
+    output.push(`<p>${transformInlineMarkdown(trimmed)}</p>`);
+  }
+
+  closeLists();
+  return output.join('');
+}
+
+function updatePreview(){
+  const title = document.getElementById('title').value.trim();
+  const author = document.getElementById('author').value.trim();
+  const date = document.getElementById('date').value;
+  const readTime = document.getElementById('readTime').value;
+  const category = document.getElementById('category').value.trim();
+  const content = document.getElementById('content').value || '';
+  const preview = document.getElementById('preview');
+  const body = renderMarkdown(content);
+
+  preview.innerHTML = `
+    ${title ? `<h2>${escapeHtml(title)}</h2>` : ''}
+    <div class="muted">${[category, date, readTime].filter(Boolean).join(' • ')}</div>
+    <div style="margin-top:10px">${body || '<p class="muted">Write something to see the preview.</p>'}</div>
+    ${author ? `<div class="muted" style="margin-top:10px">By ${escapeHtml(author)}</div>` : ''}
+  `;
+}
+
+document.querySelectorAll('[data-action]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const content = document.getElementById('content');
+    content.focus();
+    const action = btn.dataset.action;
+    if (action === 'h2') return insertBlock(content, '## {{selected}}');
+    if (action === 'h3') return insertBlock(content, '### {{selected}}');
+    if (action === 'bold') return insertAtCursor(content, '**', '**');
+    if (action === 'italic') return insertAtCursor(content, '*', '*');
+    if (action === 'bullet') return insertBlock(content, '- {{selected}}');
+    if (action === 'numbered') return insertBlock(content, '1. {{selected}}');
+    if (action === 'quote') return insertBlock(content, '> {{selected}}');
+    if (action === 'link') {
+      const text = window.prompt('Link text', 'Read more');
+      if (text === null) return;
+      const url = window.prompt('Link URL', 'https://');
+      if (url === null) return;
+      return insertAtCursor(content, `[${text}](${url})`, '');
+    }
+    if (action === 'image') {
+      const alt = window.prompt('Image alt text', 'Featured image');
+      if (alt === null) return;
+      const url = window.prompt('Image URL', 'https://');
+      if (url === null) return;
+      const caption = window.prompt('Optional caption', '');
+      const snippet = `![${alt}](${url})${caption ? `\n*${caption}*` : ''}`;
+      return insertBlock(content, snippet);
+    }
+  });
+});
+
 async function loadPosts(){
   try{
     const blogs = await api('/blogs');
@@ -175,56 +396,6 @@ function fillForm(b){
   document.getElementById('id').value = b.id || '';
 }
 
-// UX helpers
-function slugify(s){
-  return s.toString().toLowerCase().trim()
-    .replace(/[^a-z0-9\s-]/g,'')
-    .replace(/\s+/g,'-')
-    .replace(/-+/g,'-')
-    .replace(/^-+|-+$/g,'');
-}
-
-function updatePreview(){
-  const title = document.getElementById('title').value.trim();
-  const author = document.getElementById('author').value.trim();
-  const date = document.getElementById('date').value;
-  const readTime = document.getElementById('readTime').value;
-  const category = document.getElementById('category').value.trim();
-  const content = document.getElementById('content').value || '';
-  const preview = document.getElementById('preview');
-  // simple markdown-ish renderer
-  const html = content.split('\n').map(para=>{
-    if (!para.trim()) return '';
-    if (para.startsWith('###')) return '<h3>'+para.replace('###','').trim()+'</h3>';
-    if (para.startsWith('##')) return '<h2>'+para.replace('##','').trim()+'</h2>';
-    if (/^\d+\./.test(para)) return '<li>'+para.replace(/^\d+\.\s*/,'')+'</li>';
-    if (para.startsWith('- ')) return '<li>'+para.replace(/^-\s*/,'')+'</li>';
-    return '<p>'+para+'</p>';
-  }).join('');
-
-  // wrap list items into ul/ol if present
-  let body = html;
-  if (body.includes('<li>')){
-    // naive: group consecutive <li> into <ul>
-    body = body.replace(/(<li>[\s\S]*?<\/li>)(?=(?:\s*<li>))/g, '$1');
-    body = body.replace(/((?:<li>[\s\S]*?<\/li>\s*)+)/g, function(m){
-      return '<ul>'+m+'</ul>';
-    });
-  }
-
-  preview.innerHTML = `
-    ${title?'<h2>'+title+'</h2>':''}
-    <div class="muted">${category?category+' • ':''}${date?date+' • ':''}${readTime?readTime:''}</div>
-    <div style="margin-top:8px">${body}</div>
-  `;
-}
-
-function computeReadTime(text){
-  const words = (text||'').trim().split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.ceil(words / 200));
-  return minutes + ' min read';
-}
-
 // auto-slug and read time
 document.getElementById('title').addEventListener('input', ()=>{
   const idEl = document.getElementById('id');
@@ -244,15 +415,6 @@ document.getElementById('content').addEventListener('input', ()=>{
 document.getElementById('author').addEventListener('input', updatePreview);
 document.getElementById('date').addEventListener('input', updatePreview);
 document.getElementById('category').addEventListener('input', updatePreview);
-
-// set default date when showing app
-function setDefaultDate(){
-  const d = document.getElementById('date');
-  if (!d.value) {
-    const today = new Date().toISOString().slice(0,10);
-    d.value = today;
-  }
-}
 
 window.edit = async function(id){
   try{
@@ -304,19 +466,6 @@ function gatherForm(){
   };
 }
 
-// initialize preview and date when app is shown
-const _oldShowApp = showApp;
-showApp = function(){ _oldShowApp(); setDefaultDate(); updatePreview(); }
-
-window.edit = async function(id){
-  try{
-    const blogs = await api('/blogs');
-    const b = blogs.find(x=>x.id===id);
-    if (!b) return alert('Post not found');
-    fillForm(b);
-  }catch(e){console.error(e)}
-}
-
 window.del = async function(id){
   if (!confirm('Delete this post?')) return;
   try{
@@ -326,41 +475,13 @@ window.del = async function(id){
   } catch(e){console.error(e); alert('Delete failed')}
 }
 
-function clearForm(){ fillForm({}); }
+// initialize preview and date when app is shown
+const _oldShowApp = showApp;
+showApp = function(){ _oldShowApp(); setDefaultDate(); updatePreview(); };
 
-document.getElementById('clear').addEventListener('click', () => clearForm());
-
-document.getElementById('create').addEventListener('click', async ()=>{
-  const post = gatherForm();
-  if (!post.id) return alert('ID required');
-  try{
-    await api('/blogs', {method:'POST', body:JSON.stringify(post)});
-    loadPosts();
-    clearForm();
-  }catch(e){console.error(e); alert('Create failed')}
-});
-
-document.getElementById('update').addEventListener('click', async ()=>{
-  const post = gatherForm();
-  if (!post.id) return alert('ID required');
-  try{
-    await api('/blogs/'+encodeURIComponent(post.id), {method:'PUT', body:JSON.stringify(post)});
-    loadPosts();
-  }catch(e){console.error(e); alert('Update failed')}
-});
-
-function gatherForm(){
-  return {
-    id: document.getElementById('id').value.trim(),
-    title: document.getElementById('title').value.trim(),
-    excerpt: document.getElementById('excerpt').value.trim(),
-    content: document.getElementById('content').value,
-    author: document.getElementById('author').value.trim(),
-    date: document.getElementById('date').value,
-    category: document.getElementById('category').value.trim(),
-    readTime: document.getElementById('readTime').value.trim()
-  };
-}
+// keep this call after listeners are attached
+setDefaultDate();
+updatePreview();
 </script>
 </body>
 </html>

@@ -54,6 +54,10 @@
     .post-content ul,.post-content ol{margin-left:1.5rem;margin-bottom:1rem}
     .post-content li{margin-bottom:.5rem;color:var(--muted)}
     .post-content strong{color:var(--text);font-weight:700}
+    .post-content blockquote{margin:1rem 0;padding:.8rem 1rem;border-left:4px solid var(--accent);background:rgba(108,171,47,.06);border-radius:0 10px 10px 0;color:var(--muted)}
+    .post-content img{max-width:100%;display:block;margin:1rem 0;border-radius:12px}
+    .post-content a{color:var(--accent);text-decoration:none}
+    .post-content a:hover{text-decoration:underline}
     .back-link{display:inline-block;margin-top:2rem;color:var(--accent);text-decoration:none;font-weight:600}
     .back-link:hover{text-decoration:underline}
 
@@ -138,6 +142,93 @@
       }
     }
 
+    function escapeHtml(value=''){
+      return String(value)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
+    function transformInlineMarkdown(text){
+      return escapeHtml(text)
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    }
+
+    function renderMarkdown(source){
+      const lines = String(source || '').replace(/\r\n/g, '\n').split('\n');
+      const output = [];
+      let inUl = false;
+      let inOl = false;
+      let inBlockquote = false;
+
+      const closeLists = () => {
+        if (inUl) { output.push('</ul>'); inUl = false; }
+        if (inOl) { output.push('</ol>'); inOl = false; }
+        if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+      };
+
+      for (const rawLine of lines) {
+        const line = rawLine.trimEnd();
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+          closeLists();
+          continue;
+        }
+
+        const headingMatch = trimmed.match(/^(#{2,3})\s+(.*)$/);
+        if (headingMatch) {
+          closeLists();
+          const level = headingMatch[1].length;
+          output.push(`<h${level}>${transformInlineMarkdown(headingMatch[2])}</h${level}>`);
+          continue;
+        }
+
+        if (/^>\s+/.test(trimmed)) {
+          if (!inBlockquote) {
+            closeLists();
+            output.push('<blockquote>');
+            inBlockquote = true;
+          }
+          output.push(`<p>${transformInlineMarkdown(trimmed.replace(/^>\s+/, ''))}</p>`);
+          continue;
+        }
+
+        if (/^[-*]\s+/.test(trimmed)) {
+          if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+          if (!inUl) {
+            if (inOl) { output.push('</ol>'); inOl = false; }
+            output.push('<ul>');
+            inUl = true;
+          }
+          output.push(`<li>${transformInlineMarkdown(trimmed.replace(/^[-*]\s+/, ''))}</li>`);
+          continue;
+        }
+
+        if (/^\d+\.\s+/.test(trimmed)) {
+          if (inBlockquote) { output.push('</blockquote>'); inBlockquote = false; }
+          if (!inOl) {
+            if (inUl) { output.push('</ul>'); inUl = false; }
+            output.push('<ol>');
+            inOl = true;
+          }
+          output.push(`<li>${transformInlineMarkdown(trimmed.replace(/^\d+\.\s+/, ''))}</li>`);
+          continue;
+        }
+
+        closeLists();
+        output.push(`<p>${transformInlineMarkdown(trimmed)}</p>`);
+      }
+
+      closeLists();
+      return output.join('');
+    }
+
     async function loadPost() {
       const postId = getQueryParam('id');
       if (!postId) {
@@ -197,20 +288,7 @@
           </div>
         </div>
         <div class="post-content">
-          ${post.content.split('\n').map(para => {
-            if (para.startsWith('###')) {
-              return `<h3>${para.replace('###', '').trim()}</h3>`;
-            } else if (para.startsWith('##')) {
-              return `<h2>${para.replace('##', '').trim()}</h2>`;
-            } else if (/^\d+\.\s+/.test(para)) {
-              return `<li>${para.replace(/^\d+\.\s*/, '').trim()}</li>`;
-            } else if (para.startsWith('-')) {
-              return `<li>${para.replace(/^-\s*/, '').trim()}</li>`;
-            } else if (para.trim()) {
-              return `<p>${para.trim()}</p>`;
-            }
-            return '';
-          }).join('')}
+            ${renderMarkdown(post.content)}
         </div>
       `;
     }
