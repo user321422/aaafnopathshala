@@ -5,6 +5,8 @@ const path = require('path');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const morgan = require('morgan');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 const app = express();
 const BLOGS_FILE = path.join(__dirname, 'blogs.json');
@@ -28,6 +30,43 @@ async function writeBlogs(data){
   const tmp = BLOGS_FILE + '.tmp';
   await fs.writeFile(tmp, JSON.stringify(data, null, 2), 'utf8');
   await fs.rename(tmp, BLOGS_FILE);
+}
+
+async function pushToGit(){
+  const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO; // e.g. user321422/aaafnopathshala
+  const branch = process.env.GITHUB_BRANCH || 'main';
+  if (!token || !repo) {
+    return;
+  }
+  // Use HTTPS remote with token for authenticated push
+  const remoteUrl = `https://x-access-token:${token}@github.com/${repo}.git`;
+  try{
+    // configure git user
+    const out1 = await exec('git config user.email "render@aafnotech"', {cwd: __dirname});
+    const out2 = await exec('git config user.name "aafnotech-bot"', {cwd: __dirname});
+    console.log('git config set:', out1.stdout || '', out2.stdout || '');
+    // set remote temporarily
+    const outRemote = await exec(`git remote set-url origin ${remoteUrl}`, {cwd: __dirname});
+    console.log('git remote set-url:', outRemote.stdout || outRemote.stderr || '');
+    // add, commit if there are changes, and push
+    const outAdd = await exec('git add blogs.json', {cwd: __dirname});
+    console.log('git add:', outAdd.stdout || outAdd.stderr || '');
+    // commit may fail if no changes; capture output
+    try{
+      const outCommit = await exec('git commit -m "Auto-update blogs.json [render]"', {cwd: __dirname});
+      console.log('git commit:', outCommit.stdout || outCommit.stderr || '');
+    } catch(commitErr){
+      console.log('git commit (no changes or commit error):', commitErr.message || commitErr.stderr || commitErr);
+    }
+    const outPush = await exec(`git push origin ${branch}`, {cwd: __dirname});
+    console.log('git push stdout:', outPush.stdout || '');
+    console.log('blogs.json pushed to GitHub');
+  } catch (err){
+    console.error('Failed to push blogs.json to GitHub:', err.message || err);
+    if (err.stdout) console.error('stdout:', err.stdout);
+    if (err.stderr) console.error('stderr:', err.stderr);
+  }
 }
 
 // Auth
@@ -78,6 +117,8 @@ app.post('/api/blogs', authMiddleware, async (req, res) => {
     blogs.sort((a,b)=> new Date(b.date) - new Date(a.date));
     await writeBlogs(blogs);
     res.json({ok:true, post});
+    // attempt to push updated blogs.json to GitHub if configured (async)
+    pushToGit().catch(e=>console.error(e));
   } catch (err){
     console.error(err);
     res.status(500).json({error:'Failed to create post'});
@@ -96,6 +137,7 @@ app.put('/api/blogs/:id', authMiddleware, async (req, res) => {
     blogs.sort((a,b)=> new Date(b.date) - new Date(a.date));
     await writeBlogs(blogs);
     res.json({ok:true, post:updated});
+    pushToGit().catch(e=>console.error(e));
   } catch (err){
     console.error(err);
     res.status(500).json({error:'Failed to update post'});
@@ -112,6 +154,7 @@ app.delete('/api/blogs/:id', authMiddleware, async (req, res) => {
     const removed = blogs.splice(idx,1)[0];
     await writeBlogs(blogs);
     res.json({ok:true, removed});
+    pushToGit().catch(e=>console.error(e));
   } catch (err){
     console.error(err);
     res.status(500).json({error:'Failed to delete post'});

@@ -14,6 +14,13 @@ npm install
 
 2. Create `.env` (copy `.env.example`) and set a secure `ADMIN_PASSWORD` and `ADMIN_SECRET`.
 
+4. (Optional) If you want the admin to automatically publish `blogs.json` to GitHub, create a GitHub Personal Access Token (PAT) with `repo` permissions and set the following environment variables in Render:
+
+	- `GITHUB_TOKEN` — your PAT (keep secret)
+	- `GITHUB_REPO` — repository in the form `owner/repo` (e.g. `user321422/aaafnopathshala`)
+
+	After setting these variables, the admin will attempt to commit and push `blogs.json` to the repo whenever posts are created, updated, or deleted.
+
 3. Start the server:
 
 ```bash
