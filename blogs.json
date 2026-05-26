@@ -1,15 +1,5 @@
 [
   {
-    "id": "test",
-    "title": "Test",
-    "excerpt": "test",
-    "content": "Test",
-    "author": "test",
-    "date": "2026-05-26",
-    "category": "test",
-    "readTime": "1 min read"
-  },
-  {
     "id": "index",
     "title": "Hello World",
     "excerpt": "The testing of Blog System",
