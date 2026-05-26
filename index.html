@@ -8,7 +8,7 @@
 <style>
   :root {
     --bg: #f7f7f4;
-    --nav-height: 48px;
+    --nav-height: 70px;
     --surface: #ffffff;
     --surface2: #f1f3ee;
     --border: rgba(0,0,0,0.08);
@@ -37,45 +37,50 @@
 
   /* NAV */
   nav {
-    position: fixed; top: 10px; left: 5%; right: 5%; z-index: 100;
+    position: sticky; top: 0; z-index: 120;
     display: flex; align-items: center; justify-content: space-between;
-    height: calc(var(--nav-height) - 8px);
-    padding: 0 1rem;
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(6px);
-    border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(12,18,20,0.06);
-    border: 0.5px solid rgba(0,0,0,0.04);
+    padding: .9rem 5%;
+    min-height: var(--nav-height);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
   }
   .logo {
-    font-size: 1.15rem; font-weight: 800; letter-spacing: -.01em; color: var(--text);
+    font-size: 1.05rem; font-weight: 800; letter-spacing: .02em; color: var(--text);
     text-decoration: none;
   }
   .logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 1.25rem; list-style: none; align-items: center; }
+  .nav-links { display: flex; gap: 1.15rem; list-style: none; align-items: center; flex-wrap: wrap; }
   .nav-links a {
-    font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--muted); text-decoration: none; transition: color .18s ease, opacity .18s ease;
-    position: relative; padding: .25rem 0;
+    color: var(--muted); text-decoration: none; font-weight: 600;
+    position: relative; padding: .15rem 0; transition: color .18s;
   }
-  .nav-links a::after{ content: ''; position: absolute; left:0; right:0; height:2px; background:var(--accent); bottom:-6px; transform:scaleX(0); transform-origin:left; transition:transform .22s ease; }
+  .nav-links a::after{ content: ''; position: absolute; left:0; right:0; height:2px; background:var(--accent); bottom:-6px; transform:scaleX(0); transform-origin:left; transition:transform .22s; }
   .nav-links a:hover::after{ transform:scaleX(1); }
-  .nav-links a:hover { color: var(--text); opacity: .95 }
-  .nav-cta {
-    background: linear-gradient(90deg,var(--accent),var(--accent2)); color: #0a0a08;
-    font-family: Arial, Helvetica, sans-serif; font-weight: 800; font-size: .85rem;
-    letter-spacing: .04em; text-transform: uppercase;
-    border: none; border-radius: 999px; padding: .5rem 1rem;
-    cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
-    text-decoration: none; box-shadow: 0 6px 18px rgba(111,150,80,0.12);
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a[aria-current="page"] { color: var(--text); }
+  .nav-links a[aria-current="page"]::after { transform:scaleX(1); }
+  .dropdown { position: relative; }
+  .dropdown-toggle {
+    display: inline-flex; align-items: center; gap: .3rem;
+    color: var(--muted); text-decoration: none; font-weight: 600; cursor: pointer;
   }
-  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(111,150,80,0.14); }
+  .dropdown-toggle::after { content:'▾'; font-size:.72rem; line-height:1; transform:translateY(-1px); }
+  .dropdown-menu {
+    position: absolute; top: 100%; right: 0; min-width: 180px;
+    list-style: none; padding: .4rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08); display: none;
+  }
+  .dropdown-menu li a { display: block; padding: .45rem .55rem; border-radius: 6px; }
+  .dropdown-menu a::after { display: none; }
+  .dropdown:hover .dropdown-menu,
+  .dropdown:focus-within .dropdown-menu { display: block; }
 
   /* HERO */
   .hero {
     min-height: 55vh;
     display: flex; flex-direction: column; justify-content: flex-start;
-    padding: calc(var(--nav-height) + 4px) 5% 0.25rem;
+    padding: 1rem 5% 0.25rem;
     position: relative;
     overflow: hidden;
   }
@@ -406,22 +411,31 @@
   /* TABLET & MOBILE */
   @media (max-width: 1024px) {
     section { padding: 3rem 5%; }
-    nav { height: 56px; }
-    body { padding-top: 56px; }
+    :root { --nav-height: 64px; }
+    nav { padding: .8rem 4%; }
+    .nav-links { gap: .9rem; }
+    .logo { font-size: .98rem; }
+    .nav-links a { font-size: .88rem; }
+    .dropdown-menu { right: auto; left: 0; }
     .svc-detail { position: static; }
   }
 
   @media (max-width: 768px) {
     html { font-size: 15px; }
     nav { 
-      flex-direction: column; 
-      gap: 1rem; 
-      height: auto; padding: 0.75rem 5%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .45rem;
+      padding: .7rem 4%;
     }
-    body { padding-top: 0; }
-    .logo { font-size: 1rem; }
-    .nav-links { display: none; }
-    .nav-cta { padding: 0.5rem 1rem; font-size: 0.75rem; }
+    :root { --nav-height: 92px; }
+    .logo { font-size: .95rem; }
+    .nav-links { width: 100%; gap: .9rem; flex-wrap: wrap; }
+    .nav-links a { font-size: .83rem; }
+    .dropdown-menu {
+      position: static; display: block; box-shadow: none; border: none; padding: .2rem 0 0 .5rem;
+    }
+    .dropdown-toggle::after { display: none; }
     
     section { padding: 3rem 5%; }
     
@@ -548,15 +562,21 @@
 
 <!-- NAV -->
 <nav>
-  <a class="logo" href="#">Aafno<span>.</span>Pathshala</a>
+  <a class="logo" href="index.html">aafnotech</a>
   <ul class="nav-links">
+    <li><a href="index.html" aria-current="page">Home</a></li>
     <li><a href="#services">Services</a></li>
-    <li><a href="about.html">About us</a></li>
-    <li><a href="#addons">Solutions</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-  
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="about.html">About Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li class="dropdown">
+      <a class="dropdown-toggle" href="#" aria-label="Elements menu">Elements</a>
+      <ul class="dropdown-menu">
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+      </ul>
+    </li>
   </ul>
-  <a href="#contact" class="nav-cta">Get started</a>
 </nav>
 
 <!-- HERO -->
@@ -863,7 +883,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">
-    Aafno<span>.</span>Pathshala
+    aafnotech
   </div>
 
   <div class="footer-links">
@@ -970,7 +990,7 @@ function setService(i, el) {
   const s = services[i];
   document.getElementById('sd-title').textContent = s.title;
   document.getElementById('sd-desc').textContent = s.desc;
-  document.getElementById('sd-price').innerHTML = 'Starts at ' + s.price;
+  document.getElementById('sd-price').innerHTML = s.price;
   const tags = document.getElementById('sd-tags');
   tags.innerHTML = s.tags.map(t => `<span class="tag">${t}</span>`).join('');
 }

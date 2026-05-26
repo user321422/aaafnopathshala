@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FAQ — Alvon</title>
+  <style>
+    :root{--bg:#f7f7f4;--surface:#fff;--text:#111;--muted:#666;--accent:#6cab2f;--border:rgba(0,0,0,.08);--nav-height:70px;--max-width:1100px}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    nav{position:sticky;top:0;z-index:120;display:flex;align-items:center;justify-content:space-between;padding:.9rem 5%;min-height:var(--nav-height);background:var(--surface);border-bottom:1px solid var(--border)}
+    .logo{font-weight:800;color:var(--text);text-decoration:none}
+    .nav-links{display:flex;gap:1.1rem;list-style:none;align-items:center;flex-wrap:wrap}
+    .nav-links a{color:var(--muted);text-decoration:none;font-weight:600}
+    .nav-links a[aria-current='page']{color:var(--text)}
+    main{padding:2rem 5%}
+    .wrap{max-width:var(--max-width);margin:0 auto}
+    h1{font-family:Georgia,serif;font-size:2rem;margin-bottom:1rem}
+    details{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;margin:.7rem 0}
+    summary{font-weight:700;cursor:pointer}
+    p{color:var(--muted);margin-top:.6rem}
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="logo" href="index.html">aafnotech</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="faq.html" aria-current="page">FAQ</a></li>
+      <li><a href="privacy-policy.html">Privacy Policy</a></li>
+    </ul>
+  </nav>
+  <main>
+    <div class="wrap">
+      <h1>Frequently Asked Questions</h1>
+      <details open>
+        <summary>What services do you provide?</summary>
+        <p>We provide website development, content support, SEO, and business automation solutions.</p>
+      </details>
+      <details>
+        <summary>How long does a website project take?</summary>
+        <p>Typical projects take 2–6 weeks depending on scope and revisions.</p>
+      </details>
+      <details>
+        <summary>Do you work with small businesses?</summary>
+        <p>Yes. Our services are built for startups and local businesses in Nepal.</p>
+      </details>
+    </div>
+  </main>
+</body>
+</html>
