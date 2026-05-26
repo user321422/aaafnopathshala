@@ -1,8 +1,16 @@
+# Allow all robots to crawl the entire site
 User-agent: *
 Allow: /
-Disallow: /private/
 
+# Specify sitemap location for search engines
 Sitemap: https://aafnopathshala.com/sitemap.xml
 
-# Crawl delay for respectful crawling
+# Specific rules for Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Specific rules for Bing
+User-agent: Bingbot
+Allow: /
 Crawl-delay: 1
